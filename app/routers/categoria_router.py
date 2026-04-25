@@ -4,6 +4,7 @@ from typing import List
 from app.database import get_session
 from app.models.categoria import Categoria, CategoriaCreate, CategoriaRead
 from app.models.producto import Producto
+from typing import Annotated
 
 router = APIRouter(prefix="/categorias", tags=["Categorías"])
 
@@ -15,10 +16,10 @@ def crear_categoria(categoria: CategoriaCreate, session: Session = Depends(get_s
     session.refresh(db_categoria)
     return db_categoria
 
-@router.get("/", response_model=List[CategoriaRead])
-def leer_categorias(session: Session = Depends(get_session)):
+@router.get("/", response_model=list[CategoriaRead])
+def leer_categorias(session: Annotated[Session, Depends(get_session)]):
     return session.exec(select(Categoria)).all()
-
+ 
 @router.put("/{categoria_id}", response_model=CategoriaRead)
 def editar_categoria(
     categoria_id: int,

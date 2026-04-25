@@ -1,6 +1,11 @@
-from typing import List, Optional
+from typing import TYPE_CHECKING, List, Optional
 from sqlmodel import SQLModel, Field, Relationship
 from app.models.producto_ingrediente import ProductoIngrediente
+from app.models.ingrediente import IngredienteRead
+
+if TYPE_CHECKING:
+    from app.models.categoria import Categoria
+    from app.models.ingrediente import Ingrediente
 
 class ProductoBase(SQLModel):
     nombre: str = Field(index=True, max_length=100)
@@ -10,11 +15,8 @@ class ProductoBase(SQLModel):
 
 class Producto(ProductoBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    
-    # Relación 1:N [cite: 16, 68]
     categoria: "Categoria" = Relationship(back_populates="productos")
     
-    # Relación N:N [cite: 16, 68]
     ingredientes: List["Ingrediente"] = Relationship(
         back_populates="productos", 
         link_model=ProductoIngrediente
@@ -22,8 +24,7 @@ class Producto(ProductoBase, table=True):
 
 class ProductoRead(ProductoBase):
     id: int
+    ingredientes: List[IngredienteRead] = Field(default_factory=list)
 
-# AQUÍ ESTÁ LA CORRECCIÓN:
 class ProductoCreate(ProductoBase):
-    # Este campo permite recibir los IDs desde el Frontend [cite: 27, 83]
     ingredientes_ids: List[int] = []

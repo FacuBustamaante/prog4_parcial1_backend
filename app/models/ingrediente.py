@@ -1,6 +1,9 @@
-from typing import List, Optional
+from typing import TYPE_CHECKING, List, Optional
 from sqlmodel import SQLModel, Field, Relationship
 from app.models.producto_ingrediente import ProductoIngrediente
+
+if TYPE_CHECKING:
+    from app.models.producto import Producto
 
 class IngredienteBase(SQLModel):
     nombre: str = Field(index=True, max_length=50)
