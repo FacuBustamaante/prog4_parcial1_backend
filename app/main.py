@@ -2,13 +2,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-# Importamos la función para crear tablas y los routers
 from app.database import create_db_and_tables
 from app.routers import categoria_router, ingrediente_router, producto_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Este paso es vital para la "Persistencia": crea las tablas si no existen
     create_db_and_tables()
     yield
 
@@ -19,16 +17,14 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Configuración de CORS: Necesario para que tu Frontend (Vite/React) pueda consultar la API
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # En producción deberías restringir esto
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Registro de rutas (Modularización)
 app.include_router(categoria_router.router)
 app.include_router(ingrediente_router.router)
 app.include_router(producto_router.router)
